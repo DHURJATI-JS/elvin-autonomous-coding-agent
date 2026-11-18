@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% set page_title = "Version history" %}{% set page_icon = "fa-solid fa-clock-rotate-left" %}{% set page_grad = "from-cyan-500 to-sky-500" %}
+{% block content %}
+{% include "_project_header.html" %}
+<div class="card mb-5 flex flex-wrap items-center justify-between gap-3 animate-fade-up">
+  <div><h2 class="font-semibold">Timestamped, hash-chained versions</h2>
+    <p class="text-xs muted" id="hist-sub">Each version is stored in PostgreSQL and as files on your disk; "Verify" re-checks every stored file and the chain.</p></div>
+  <button class="btn btn-primary" id="save-now"><i class="fa-solid fa-camera"></i> Save a version now</button>
+</div>
+<div id="snapshots" class="relative space-y-3 pl-6 animate-fade-up before:absolute before:bottom-2 before:left-2 before:top-2 before:w-px before:bg-[var(--border-strong)]"></div>
+{% endblock %}
+{% block scripts %}<script nonce="{{ nonce }}" type="module" src="/static/js/history.js"></script>{% endblock %}

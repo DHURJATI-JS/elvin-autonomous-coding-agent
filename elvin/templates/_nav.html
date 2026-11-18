@@ -1,0 +1,96 @@
+{% set feat = feature|default('') %}
+<header class="nav-shell glass">
+  <a href="{{ '/dashboard' if user else '/' }}" class="mr-1 flex items-center gap-2.5" aria-label="Elvin home">
+    <span class="logo-mark"><i class="fa-solid fa-wand-magic-sparkles text-sm"></i></span>
+    <span class="hidden text-lg font-semibold tracking-tight sm:inline">Elvin</span>
+  </a>
+  {% if user %}
+  <nav class="hidden flex-1 items-center gap-0.5 overflow-x-auto xl:flex" aria-label="Main">
+    <a class="nav-link {{ 'active' if path == '/dashboard' }}" href="/dashboard"><i class="fa-solid fa-gauge-high"></i>Dashboard</a>
+    <a class="nav-link {{ 'active' if feat == 'elvin' }}" href="/go/elvin"><i class="fa-solid fa-robot"></i>Elvin AI</a>
+    <a class="nav-link {{ 'active' if feat == 'editor' }}" href="/go/editor"><i class="fa-solid fa-code"></i>Editor</a>
+    <a class="nav-link {{ 'active' if feat == 'bughunt' }}" href="/go/bughunt"><i class="fa-solid fa-bug"></i>Bug Hunt</a>
+    <a class="nav-link {{ 'active' if feat == 'vulns' }}" href="/go/vulns"><i class="fa-solid fa-shield-virus"></i>Vuln Scan</a>
+    <a class="nav-link {{ 'active' if feat == 'loadtest' }}" href="/go/loadtest"><i class="fa-solid fa-gauge-simple-high"></i>Load Test</a>
+    <a class="nav-link {{ 'active' if feat == 'git' }}" href="/go/git"><i class="fa-brands fa-github"></i>Git</a>
+    <a class="nav-link {{ 'active' if path == '/clone' }}" href="/clone"><i class="fa-solid fa-code-branch"></i>Clone</a>
+  </nav>
+  <div class="ml-auto flex items-center gap-1">
+    <div class="relative" data-dropdown>
+      <button class="btn btn-ghost btn-sm" data-dropdown-toggle aria-haspopup="true" aria-expanded="false">
+        <i class="fa-solid fa-layer-group"></i>
+        <span class="hidden max-w-[160px] truncate sm:inline">{{ current_project.name if current_project else 'Projects' }}</span>
+        <i class="fa-solid fa-chevron-down text-[10px] opacity-60"></i>
+      </button>
+      <div class="menu glass-strong right-0 hidden w-[320px]" data-dropdown-menu role="menu">
+        <div class="px-3 pb-1 pt-2 text-[11px] font-semibold uppercase tracking-wider faint">Recent projects</div>
+        {% for p in nav_projects %}
+        <div class="group flex items-center gap-1 rounded-lg pr-1 hover:bg-[var(--hover)]" data-nav-project="{{ p.id }}" data-name="{{ p.name }}">
+          <a class="menu-item flex-1 truncate !bg-transparent" href="/p/{{ p.id }}/{{ feat if feat in ['elvin','editor','bughunt','vulns','loadtest','git','history'] else 'elvin' }}">
+            <i class="fa-regular fa-folder{{ '-open text-violet-500' if current_project and current_project.id == p.id else '' }}"></i>
+            <span class="truncate">{{ p.name }}</span>
+          </a>
+          <button class="btn-icon !h-7 !w-7 text-xs opacity-0 transition group-hover:opacity-100 focus:opacity-100" title="Archive" data-action="archive-project"><i class="fa-solid fa-box-archive"></i></button>
+          <button class="btn-icon !h-7 !w-7 text-xs text-rose-500 opacity-0 transition group-hover:opacity-100 focus:opacity-100" title="Delete" data-action="delete-project"><i class="fa-regular fa-trash-can"></i></button>
+        </div>
+        {% else %}
+        <div class="px-3 py-3 text-sm muted">No projects yet.</div>
+        {% endfor %}
+        <div class="divider my-1.5"></div>
+        <a class="menu-item" href="/projects?new=1"><i class="fa-solid fa-plus text-violet-500"></i>New project</a>
+        <a class="menu-item" href="/projects"><i class="fa-solid fa-table-cells-large"></i>All projects &amp; archive</a>
+      </div>
+    </div>
+    <a href="/status" class="btn-icon relative" title="System status - AI latency checked every 60 s" id="nav-status" aria-label="System status">
+      <i class="fa-solid fa-heart-pulse"></i><span class="dot dot-ok absolute right-1.5 top-1.5 !h-1.5 !w-1.5" id="nav-status-dot"></span>
+    </a>
+    <a href="/dashboard#tasks" class="btn-icon relative {{ '' if running_tasks else 'hidden' }}" title="Running tasks" id="nav-running">
+      <i class="fa-solid fa-spinner fa-spin text-violet-500"></i>
+      <span class="absolute -right-0.5 -top-0.5 rounded-full bg-violet-600 px-1.5 text-[10px] font-bold text-white" id="nav-running-count">{{ running_tasks }}</span>
+    </a>
+    <button class="btn-icon" data-theme-toggle title="Toggle light / dark mode" aria-label="Toggle theme"><i class="fa-solid fa-moon dark:hidden"></i><i class="fa-solid fa-sun hidden dark:inline"></i></button>
+    <div class="relative" data-dropdown>
+      <button class="flex items-center gap-2 rounded-xl px-1.5 py-1 hover:bg-[var(--hover)]" data-dropdown-toggle aria-haspopup="true" aria-expanded="false">
+        <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-cyan-500 text-sm font-semibold text-white">{{ user.username[:1]|upper }}</span>
+        <i class="fa-solid fa-chevron-down text-[10px] opacity-60"></i>
+      </button>
+      <div class="menu glass-strong right-0 hidden" data-dropdown-menu role="menu">
+        <div class="px-3 py-2"><div class="text-sm font-semibold">{{ user.username }}</div><div class="truncate text-xs muted">{{ user.email }}</div></div>
+        <div class="divider my-1"></div>
+        <a class="menu-item xl:hidden" href="/dashboard"><i class="fa-solid fa-gauge-high w-4"></i>Dashboard</a>
+        <a class="menu-item xl:hidden" href="/go/elvin"><i class="fa-solid fa-robot w-4"></i>Elvin AI</a>
+        <a class="menu-item xl:hidden" href="/go/editor"><i class="fa-solid fa-code w-4"></i>Editor</a>
+        <a class="menu-item xl:hidden" href="/go/bughunt"><i class="fa-solid fa-bug w-4"></i>Bug Hunt</a>
+        <a class="menu-item xl:hidden" href="/go/vulns"><i class="fa-solid fa-shield-virus w-4"></i>Vuln Scan</a>
+        <a class="menu-item xl:hidden" href="/go/loadtest"><i class="fa-solid fa-gauge-simple-high w-4"></i>Load Test</a>
+        <a class="menu-item xl:hidden" href="/go/git"><i class="fa-brands fa-github w-4"></i>Git</a>
+        <a class="menu-item xl:hidden" href="/clone"><i class="fa-solid fa-code-branch w-4"></i>Clone</a>
+        <div class="divider my-1 xl:hidden"></div>
+        <a class="menu-item" href="/go/history"><i class="fa-solid fa-clock-rotate-left w-4"></i>Version history</a>
+        <a class="menu-item" href="/status"><i class="fa-solid fa-heart-pulse w-4"></i>System status</a>
+        <a class="menu-item" href="/github"><i class="fa-brands fa-github w-4"></i>All GitHub repositories</a>
+        <a class="menu-item" href="/usage"><i class="fa-solid fa-chart-pie w-4"></i>AI usage &amp; models</a>
+        <a class="menu-item" href="/settings"><i class="fa-solid fa-sliders w-4"></i>Settings</a>
+        <a class="menu-item" href="/about"><i class="fa-regular fa-circle-question w-4"></i>About</a>
+        <div class="divider my-1"></div>
+        <form method="post" action="/logout" data-logout-form>
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <button class="menu-item text-rose-500" type="submit"><i class="fa-solid fa-arrow-right-from-bracket w-4"></i>Sign out</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <nav class="ml-4 hidden items-center gap-1 md:flex">
+    <a class="nav-link" href="/#features">Features</a>
+    <a class="nav-link" href="/#teams">AI teams</a>
+    <a class="nav-link" href="/#security">Security</a>
+    <a class="nav-link" href="/about">About</a>
+  </nav>
+  <div class="ml-auto flex items-center gap-2">
+    <button class="btn-icon" data-theme-toggle title="Toggle light / dark mode" aria-label="Toggle theme"><i class="fa-solid fa-moon dark:hidden"></i><i class="fa-solid fa-sun hidden dark:inline"></i></button>
+    <a class="btn btn-ghost" href="/login">Sign in</a>
+    <a class="btn btn-primary sheen" href="/signup">Get started <i class="fa-solid fa-arrow-right text-xs"></i></a>
+  </div>
+  {% endif %}
+</header>

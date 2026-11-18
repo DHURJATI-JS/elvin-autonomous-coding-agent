@@ -1,0 +1,14 @@
+<div class="mb-5 flex flex-wrap items-end justify-between gap-4 animate-fade-up">
+  <div class="min-w-0">
+    <div class="flex items-center gap-2 text-sm muted"><a class="hover:underline" href="/projects">Projects</a><i class="fa-solid fa-chevron-right text-[10px]"></i><span class="truncate">{{ project.name }}</span></div>
+    <h1 class="h-title mt-1 flex items-center gap-3"><span class="icon-tile !h-10 !w-10 !text-base bg-gradient-to-br {{ page_grad|default('from-violet-500 to-indigo-500') }}"><i class="{{ page_icon }}"></i></span>{{ page_title }}</h1>
+  </div>
+  <div class="glass flex flex-wrap gap-1 p-1 text-sm" role="tablist">
+    {% for key, ic, label in [('elvin','fa-solid fa-robot','Elvin AI'),('editor','fa-solid fa-code','Editor'),('bughunt','fa-solid fa-bug','Bug Hunt'),
+                               ('vulns','fa-solid fa-shield-virus','Vulns'),('loadtest','fa-solid fa-gauge-simple-high','Load Test'),
+                               ('git','fa-brands fa-github','Git'),('history','fa-solid fa-clock-rotate-left','History')] %}
+    <a href="/p/{{ project.id }}/{{ key }}" class="nav-link !py-1.5 {{ 'active' if feature == key }}"><i class="{{ ic }}"></i><span class="hidden md:inline">{{ label }}</span></a>
+    {% endfor %}
+  </div>
+</div>
+<div id="integrity-banner" class="mb-4 hidden"></div>

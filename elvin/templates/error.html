@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="mx-auto mt-16 max-w-lg text-center animate-fade-up">
+  <div class="text-7xl font-semibold gradient-text">{{ code }}</div>
+  <p class="mt-4 text-lg">{{ message }}</p>
+  <a class="btn btn-primary mt-8" href="{{ '/dashboard' if user else '/' }}"><i class="fa-solid fa-house"></i> Go home</a>
+</div>
+{% endblock %}

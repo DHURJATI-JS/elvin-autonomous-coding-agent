@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block content %}
+<canvas id="constellation" class="pointer-events-none fixed inset-0 -z-[1] h-full w-full opacity-70" aria-hidden="true"></canvas>
+
+<section class="relative mx-auto grid max-w-6xl items-center gap-10 pt-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:pt-16">
+  <div class="stagger">
+    <span class="badge badge-brand"><span class="dot dot-live"></span> Runs on your computer · asks before it acts</span>
+    <h1 class="mt-5 text-4xl font-semibold leading-[1.05] tracking-tight sm:text-6xl">
+      Meet <span class="gradient-text">Elvin</span>,<br>your autonomous<br>agentic coder.
+    </h1>
+    <p class="mt-5 max-w-xl text-lg muted">Elvin plans, writes, tests and verifies code with local and cloud AI models - and shows you a
+      permission dialog before every change or command. Every step is timestamped, verified and reversible.</p>
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a class="btn btn-primary btn-lg sheen" href="/signup"><i class="fa-solid fa-rocket"></i> Create your account</a>
+      <a class="btn btn-ghost btn-lg" href="/login"><i class="fa-solid fa-right-to-bracket"></i> Sign in</a>
+    </div>
+    <div class="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm muted">
+      <span><i class="fa-solid fa-microchip text-violet-500"></i> Gemma 3 · Qwen Coder · Claude · ChatGPT</span>
+      <span><i class="fa-solid fa-lock text-cyan-500"></i> CSP nonce · CSRF · Argon2id</span>
+      <span><i class="fa-solid fa-virus-slash text-pink-500"></i> ClamAV on everything incoming</span>
+    </div>
+  </div>
+
+  <div class="glass-strong relative overflow-hidden p-0 animate-fade-up ring-glow">
+    <div class="flex items-center gap-2 border-b border-[var(--border)] px-4 py-3">
+      <span class="h-3 w-3 rounded-full bg-rose-400"></span><span class="h-3 w-3 rounded-full bg-amber-400"></span><span class="h-3 w-3 rounded-full bg-emerald-400"></span>
+      <span class="ml-3 text-xs muted">Elvin · my-api</span>
+    </div>
+    <div class="space-y-3 p-4 text-sm">
+      <div class="bubble-user">Add a /health endpoint with a test, then stress test it with 50 users.</div>
+      <div class="flex gap-2"><span class="avatar-elvin"><i class="fa-solid fa-wand-magic-sparkles text-xs"></i></span>
+        <div class="bubble-elvin text-sm">
+          <div class="mb-2 font-medium">Plan · 3 steps</div>
+          <div class="space-y-1.5 muted">
+            <div><i class="fa-solid fa-circle-check text-emerald-500"></i> Library check: <code>fastapi</code> - no known vulnerabilities</div>
+            <div><i class="fa-solid fa-circle-check text-emerald-500"></i> Step 1 approved · autosaved 14:02:11 · <span class="text-emerald-500">verified</span></div>
+            <div><i class="fa-solid fa-spinner fa-spin text-violet-500"></i> Running <code>pytest -q</code> in the sandbox...</div>
+          </div>
+        </div>
+      </div>
+      <div class="event-card">
+        <div class="flex items-center justify-between"><span class="font-medium"><i class="fa-solid fa-shield-halved text-violet-500"></i> Elvin wants to make 2 changes</span><span class="badge badge-warn">needs approval</span></div>
+        <div class="code-box mt-2 !py-2 text-[12px]"><span class="diff-line diff-hunk">@@ app/main.py @@</span><span class="diff-line diff-add">+@app.get("/health")</span><span class="diff-line diff-add">+async def health():</span><span class="diff-line diff-add">+    return {"ok": True}</span></div>
+        <div class="mt-2 flex justify-end gap-2"><span class="btn btn-ghost btn-sm">Reject</span><span class="btn btn-primary btn-sm">Approve &amp; apply</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="features" class="mx-auto mt-28 max-w-6xl">
+  <div class="reveal text-center">
+    <div class="eyebrow">Everything in one place</div>
+    <h2 class="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">An entire engineering toolkit, run by an agent you control</h2>
+    <p class="mx-auto mt-3 max-w-2xl muted">Each tool has its own page in the navigation bar - no hunting through menus.</p>
+  </div>
+  {% set features = [
+    ('fa-robot', 'from-violet-500 to-indigo-500', 'Elvin AI coding', 'Describe what you want. Elvin plans it, writes the code, runs the tests in an isolated sandbox and fixes failures - asking your permission at every step.'),
+    ('fa-shield-halved', 'from-fuchsia-500 to-pink-500', 'Permission before everything', 'No AI may change a file or run a command until you approve it in a dialog that shows the exact diff or command. Writes are locked inside the project folder.'),
+    ('fa-clock-rotate-left', 'from-cyan-500 to-sky-500', 'Timestamped versions', 'After every step Elvin autosaves a hash-chained, verified version to PostgreSQL and your disk. Restore any moment with one click (on by default, can be turned off).'),
+    ('fa-plug-circle-bolt', 'from-amber-500 to-orange-500', 'Blackout-proof failsafe', 'A write-ahead journal makes every change all-or-nothing. Network drop, crash or power cut - your code is never left half-written.'),
+    ('fa-file-shield', 'from-emerald-500 to-teal-500', 'Integrity checks', 'Each time you open a project Elvin checks every file. Deleted or changed something while Elvin was closed? Restore it or accept it - nothing breaks.'),
+    ('fa-code', 'from-indigo-500 to-blue-500', 'Editor with Qwen autocomplete', 'A built-in code editor for manual work, with Copilot-style ghost-text suggestions from the local Qwen Coder model. Tab to accept.'),
+    ('fa-image', 'from-pink-500 to-rose-500', 'Design from a screenshot', 'Upload a picture of the UI you want. Gemma reads it, Qwen builds it, and Gemma checks screenshots of the result in a sandboxed browser.'),
+    ('fa-bug', 'from-rose-500 to-red-500', 'Bug hunting', 'A white-box security review of any folder with Claude Haiku, ChatGPT or Qwen (Qwen for smaller projects), plus instant rule-based checks.'),
+    ('fa-shield-virus', 'from-teal-500 to-cyan-500', 'Vulnerability detector', 'Checks every dependency against OSV.dev and recommends the exact safe upgrade. Elvin itself must pass this gate before it may use any library.'),
+    ('fa-gauge-simple-high', 'from-orange-500 to-amber-500', 'Locust load testing', 'Weight each page, pick users and duration, watch live Chart.js graphs, keep every run in PostgreSQL and export CSV. Or just ask Elvin to stress test.'),
+    ('fa-github', 'from-slate-500 to-zinc-600', 'Git & GitHub', 'Push a project to a new GitHub repository in one go, see your GitHub stats on the dashboard and get suggestions when something needs attention.'),
+    ('fa-code-branch', 'from-violet-500 to-fuchsia-500', 'Safe cloning', 'Elvin reads the README and license, explains the terms (in plain language on request), waits for your agreement and scans every file with ClamAV.'),
+  ] %}
+  <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    {% for ic, grad, title, text in features %}
+    <div class="card card-hover sheen reveal">
+      <span class="icon-tile bg-gradient-to-br {{ grad }}"><i class="{{ 'fa-brands' if ic == 'fa-github' else 'fa-solid' }} {{ ic }}"></i></span>
+      <h3 class="mt-4 text-lg font-semibold">{{ title }}</h3>
+      <p class="mt-1.5 text-sm muted">{{ text }}</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<section id="teams" class="mx-auto mt-28 max-w-6xl">
+  <div class="reveal grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] lg:items-center">
+    <div>
+      <div class="eyebrow">AI teams</div>
+      <h2 class="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Mix local and cloud models the way you like</h2>
+      <p class="mt-3 muted">Run fully local with Gemma 3 and Qwen Coder, or bring Claude (Opus for code, Haiku for bug hunting) or ChatGPT in as
+        partners or fallbacks. Pick an effort level and see usage, speed and cost per model to decide what works best.</p>
+      <ul class="mt-5 space-y-2 text-sm">
+        <li><i class="fa-solid fa-microchip text-violet-500"></i> Qwen runs on vLLM for NVIDIA & AMD GPUs, and on Apple-Silicon Metal via Ollama.</li>
+        <li><i class="fa-solid fa-scale-balanced text-cyan-500"></i> Every model has its own concurrency limit and circuit breaker - no overload, automatic fail-over.</li>
+        <li><i class="fa-solid fa-brain text-pink-500"></i> Each project has its own memory; nothing is ever shared between projects.</li>
+      </ul>
+    </div>
+    <div class="grid gap-3 sm:grid-cols-2">
+      {% for tid in ['gemma_qwen', 'qwen_claude', 'gemma_claude', 'qwen_claude_gemma', 'claude', 'chatgpt'] %}
+      {% set t = teams[tid] %}
+      <div class="glass p-4 card-hover"><div class="flex items-center gap-2 font-semibold"><i class="fa-solid fa-people-group text-violet-500"></i>{{ t.label }}</div>
+        <p class="mt-1 text-xs muted">{{ t.blurb }}</p></div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section id="security" class="mx-auto mt-28 max-w-6xl">
+  <div class="glass-strong reveal overflow-hidden p-8 sm:p-10">
+    <div class="grid gap-8 lg:grid-cols-2">
+      <div>
+        <div class="eyebrow">Secure by default</div>
+        <h2 class="mt-2 text-3xl font-semibold tracking-tight">Built like a bank vault, feels like a toy</h2>
+        <p class="mt-3 muted">Multiple people can use one Elvin installation. Each account is isolated, and the browser is locked down.</p>
+      </div>
+      <div class="grid gap-3 text-sm sm:grid-cols-2">
+        {% for ic, t in [('fa-key','Argon2id passwords, rate-limited logins'), ('fa-user-lock','One login per account - old devices sign out'),
+                         ('fa-fingerprint','Strict Content-Security-Policy with per-request nonces'), ('fa-shield-halved','CSRF tokens + Talisman-style headers'),
+                         ('fa-virus-slash','ClamAV scans uploads, images and clones'), ('fa-box','Code runs in an isolated sandbox container'),
+                         ('fa-folder-tree','AI can only write inside its project folder'), ('fa-gauge','Spam & double-send protection, caps on everything')] %}
+        <div class="flex items-start gap-3 rounded-xl p-3 hover:bg-[var(--hover)]"><i class="fa-solid {{ ic }} mt-0.5 text-violet-500"></i><span>{{ t }}</span></div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="mx-auto mt-28 max-w-4xl text-center reveal">
+  <h2 class="text-3xl font-semibold tracking-tight sm:text-5xl">Ready to build with <span class="gradient-text">Elvin</span>?</h2>
+  <p class="mt-4 muted">Create an account on this computer - it takes ten seconds.</p>
+  <div class="mt-8 flex justify-center gap-3"><a class="btn btn-primary btn-lg sheen" href="/signup">Get started free</a><a class="btn btn-ghost btn-lg" href="/about">Read the details</a></div>
+  <p class="mx-auto mt-10 max-w-2xl text-xs faint">Elvin is provided "as is", without warranty of any kind. AI output can be wrong or insecure; review every change.
+    Security features are aids, not guarantees. Only stress test or scan systems you own or are authorised to test.</p>
+</section>
+{% endblock %}
+{% block scripts %}<script nonce="{{ nonce }}" type="module" src="/static/js/landing.js"></script>{% endblock %}

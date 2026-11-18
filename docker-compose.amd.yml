@@ -1,0 +1,24 @@
+# AMD GPUs on Linux (ROCm): Qwen Coder served by AMD's vLLM build.
+# The installer picks the RDNA (Radeon) or CDNA (Instinct) image.
+services:
+  vllm:
+    image: ${ROCM_VLLM_IMAGE:-rocm/vllm:rocm7.14.1_rdna_ubuntu24.04_py3.14_pytorch_2.11_vllm_0.23.0}
+    command: ["vllm", "serve", "${QWEN_MODEL}", "--max-model-len", "${QWEN_CONTEXT:-16384}",
+              "--gpu-memory-utilization", "0.85", "--host", "0.0.0.0", "--port", "8000"]
+    devices:
+      - /dev/kfd
+      - /dev/dri
+    group_add: [video]
+    security_opt: ["seccomp=unconfined"]
+    ipc: host
+    shm_size: 8g
+    volumes:
+      - elvin_hf_cache:/root/.cache/huggingface
+    networks: [default]
+    restart: unless-stopped
+  app:
+    depends_on:
+      vllm: {condition: service_started}
+
+volumes:
+  elvin_hf_cache:

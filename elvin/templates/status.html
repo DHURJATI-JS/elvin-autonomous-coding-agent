@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="flex flex-wrap items-end justify-between gap-4 animate-fade-up">
+  <div>
+    <div class="eyebrow"><span class="dot dot-live mr-1"></span> Live</div>
+    <h1 class="h-title mt-1 flex items-center gap-3"><span class="icon-tile !h-10 !w-10 !text-base bg-gradient-to-br from-emerald-500 to-teal-500"><i class="fa-solid fa-heart-pulse"></i></span>System status</h1>
+    <p class="mt-1 text-sm muted">AI latency is measured every <span id="interval">60</span> seconds. Last check <span id="checked" class="font-medium">-</span> · next in <span id="countdown" class="font-mono">-</span></p>
+  </div>
+  <button class="btn btn-ghost" id="refresh"><i class="fa-solid fa-rotate"></i> Check now</button>
+</section>
+
+<div id="fallback-note" class="mt-4 hidden"></div>
+<div class="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4 stagger" id="overall"></div>
+
+<section class="card mt-6 animate-fade-up">
+  <div class="flex flex-wrap items-center justify-between gap-2"><h2 class="font-semibold"><i class="fa-solid fa-microchip text-violet-500"></i> AI models</h2>
+    <span class="text-xs muted">Response = time for a real 1-token answer · API = network round-trip. Cloud models only get the free API check.</span></div>
+  <div id="providers" class="mt-4 grid gap-3 md:grid-cols-2 2xl:grid-cols-3"></div>
+</section>
+
+<div class="mt-6 grid gap-6 xl:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
+  <section class="card min-w-0 animate-fade-up">
+    <div class="flex flex-wrap items-center justify-between gap-2"><h2 class="font-semibold"><i class="fa-solid fa-network-wired text-cyan-500"></i> Gemma gateway</h2><span id="gw-badge"></span></div>
+    <div id="gateway" class="mt-4"></div>
+    <div class="mt-4 chart-box !h-40"><canvas id="gw-chart"></canvas></div>
+    <form id="gw-form" class="mt-5 hidden rounded-2xl border border-[var(--border)] p-4">
+      <div class="text-sm font-medium">Gateway address <span class="badge ml-1">admin</span></div>
+      <p class="mt-1 text-xs muted">If the gateway PC got a new IP address, enter it here - no need to re-run the installer.</p>
+      <div class="mt-3 grid gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,0.7fr)_auto]">
+        <input class="input" id="gw-url" placeholder="http://192.168.1.50:8000/v1" maxlength="300" required>
+        <input class="input" id="gw-key" type="password" placeholder="API key (unchanged if empty)" maxlength="300" autocomplete="off">
+        <button class="btn btn-primary" type="submit"><i class="fa-solid fa-floppy-disk"></i> Save &amp; test</button>
+      </div>
+    </form>
+  </section>
+  <div class="min-w-0 space-y-6">
+    <section class="card animate-fade-up"><h2 class="font-semibold"><i class="fa-solid fa-server text-emerald-500"></i> Services</h2><div id="services" class="mt-3 space-y-1.5 text-sm"></div></section>
+    <section class="card animate-fade-up"><h2 class="font-semibold"><i class="fa-solid fa-laptop-code text-pink-500"></i> This computer</h2><div id="platform" class="mt-3 space-y-1.5 text-sm"></div></section>
+    <section class="card text-sm animate-fade-up">
+      <h2 class="font-semibold"><i class="fa-solid fa-gauge text-amber-500"></i> Where Gemma runs &amp; effort policy</h2>
+      <div class="mt-3 flex flex-wrap items-center gap-2">
+        <div class="seg" id="gemma-source" role="group" aria-label="Where Gemma runs">
+          <button type="button" data-src="auto" aria-pressed="false"><i class="fa-solid fa-network-wired"></i> Gateway first</button>
+          <button type="button" data-src="local" aria-pressed="false"><i class="fa-brands fa-docker"></i> Local Docker only</button>
+        </div>
+        <span class="badge hidden" id="gemma-source-admin">admin</span>
+      </div>
+      <p class="mt-2 text-xs muted" id="gemma-source-help"></p>
+      <p class="mt-3 muted">When the gateway isn't used, Elvin uses <strong>Gemma 3 running in Docker on this computer</strong>; when no faster Qwen Coder is available, the <strong>local Qwen Coder in Docker</strong> writes the code (<span id="local-model">-</span> - one loaded at a time). They run on the CPU, so they are slower: while they answer, effort never goes above <strong id="cap">medium</strong> - fewer fix attempts, no extra review pass - and Elvin shows an alert so you know.</p>
+    </section>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script nonce="{{ nonce }}" src="/static/vendor/chartjs/chart.umd.min.js"></script>
+<script nonce="{{ nonce }}" type="module" src="/static/js/status.js"></script>
+{% endblock %}

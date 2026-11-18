@@ -1,0 +1,21 @@
+{% extends "auth/_layout.html" %}
+{% block side_title %}Forgot your password?{% endblock %}
+{% block side_text %}We'll send a one-time link that works for {{ limits.RESET_TOKEN_MINUTES }} minutes.{% endblock %}
+{% block form %}
+<h2 class="text-2xl font-semibold tracking-tight">Reset password</h2>
+{% if sent %}
+<div class="mt-6 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-sm">
+  <i class="fa-solid fa-envelope-circle-check text-emerald-500"></i>
+  If an account uses that email, a reset link is on its way. Without email set up on this computer, the person who installed
+  Elvin can find the link in Elvin's log or in the <code>data/outbox</code> folder.
+</div>
+<a class="btn btn-ghost mt-6 w-full" href="/login">Back to sign in</a>
+{% else %}
+<form method="post" action="/forgot" class="mt-6 space-y-4">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  <div><label class="label" for="email">Email</label><input class="input" id="email" name="email" type="email" required maxlength="254" autocomplete="email" autofocus></div>
+  <button class="btn btn-primary w-full" type="submit"><i class="fa-solid fa-paper-plane"></i> Send reset link</button>
+</form>
+<p class="mt-4 text-sm muted"><a class="text-violet-500 hover:underline" href="/login">Back to sign in</a></p>
+{% endif %}
+{% endblock %}

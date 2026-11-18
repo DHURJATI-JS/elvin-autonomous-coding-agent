@@ -1,0 +1,7 @@
+Downloaded by scripts/fetch-vendor.sh (sha512-verified against registry.npmjs.org)
+@fortawesome/fontawesome-free 7.3.1
+chart.js 4.6.1
+codemirror 5.65.21
+@fontsource-variable/inter 5.3.0
+@fontsource-variable/jetbrains-mono 5.3.0
+tailwindcss 4.3.4 (built at image-build time, see Dockerfile stage "assets")

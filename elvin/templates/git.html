@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% set page_title = "Git & GitHub" %}{% set page_icon = "fa-brands fa-github" %}{% set page_grad = "from-slate-600 to-zinc-800" %}
+{% block content %}
+{% include "_project_header.html" %}
+<div class="grid gap-5 xl:grid-cols-[minmax(0,1fr)_380px]">
+  <section class="min-w-0 space-y-5 animate-fade-up">
+    <div class="card" id="account-card"><div class="skeleton h-16"></div></div>
+    <div class="card">
+      <h2 class="font-semibold"><i class="fa-solid fa-cloud-arrow-up text-violet-500"></i> Push this project to GitHub</h2>
+      <p class="mt-1 text-xs muted">Elvin initialises git, adds a safe .gitignore, scans for secrets, commits, creates the repository with the GitHub CLI and pushes. You confirm before anything is uploaded.</p>
+      <form id="push-form" class="mt-4 grid gap-3 sm:grid-cols-2">
+        <div><label class="label">Repository name</label><input class="input" id="repo-name" maxlength="100" pattern="[A-Za-z0-9._-]+" required></div>
+        <div><label class="label">Visibility</label><div class="seg w-full" id="visibility"><button type="button" class="flex-1" aria-pressed="true" data-v="private"><i class="fa-solid fa-lock"></i> Private</button><button type="button" class="flex-1" aria-pressed="false" data-v="public"><i class="fa-solid fa-globe"></i> Public</button></div></div>
+        <div class="sm:col-span-2"><label class="label">Description</label><input class="input" id="repo-desc" maxlength="300" placeholder="Optional"></div>
+        <div class="sm:col-span-2"><label class="label">Commit message</label><input class="input" id="commit-msg" maxlength="500" value="Update from Elvin"></div>
+        <div class="sm:col-span-2 flex justify-end"><button class="btn btn-primary sheen" type="submit" id="push-btn"><i class="fa-solid fa-cloud-arrow-up"></i> Push to GitHub</button></div>
+      </form>
+      <div id="push-result" class="mt-4"></div>
+    </div>
+  </section>
+  <aside class="min-w-0 space-y-5 animate-fade-up">
+    <div class="card"><h2 class="font-semibold"><i class="fa-solid fa-code-branch text-cyan-500"></i> Local repository</h2><div id="repo-status" class="mt-3 space-y-2 text-sm"><div class="skeleton h-24"></div></div></div>
+    <div class="card text-xs muted"><i class="fa-solid fa-user-secret"></i> Commits use your GitHub no-reply address, so your real email isn't published. Tokens never appear on a command line or in a file.</div>
+  </aside>
+</div>
+{% endblock %}
+{% block scripts %}<script nonce="{{ nonce }}" type="module" src="/static/js/git.js"></script>{% endblock %}

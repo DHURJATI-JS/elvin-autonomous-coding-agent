@@ -1,0 +1,15 @@
+{% extends "auth/_layout.html" %}
+{% block form %}
+<h2 class="text-2xl font-semibold tracking-tight">Sign in</h2>
+<p class="mt-1 text-sm muted">New here? <a class="font-medium text-violet-500 hover:underline" href="/signup">Create an account</a></p>
+<form method="post" action="/login" class="mt-6 space-y-4" autocomplete="on">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  <input type="hidden" name="next" value="{{ next }}">
+  <div><label class="label" for="identifier">Email or username</label>
+    <input class="input" id="identifier" name="identifier" required maxlength="254" autocomplete="username" value="{{ values.identifier|default('') }}" autofocus></div>
+  <div><div class="flex items-center justify-between"><label class="label" for="password">Password</label><a class="text-xs text-violet-500 hover:underline" href="/forgot">Forgot password?</a></div>
+    <input class="input" id="password" name="password" type="password" required maxlength="256" autocomplete="current-password"></div>
+  <button class="btn btn-primary w-full sheen" type="submit"><i class="fa-solid fa-right-to-bracket"></i> Sign in</button>
+</form>
+<p class="mt-5 text-xs faint">Signing in here signs out any other device or browser using this account.</p>
+{% endblock %}

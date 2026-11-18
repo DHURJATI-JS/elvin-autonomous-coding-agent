@@ -1,0 +1,37 @@
+# Throwaway test stack: its own PostgreSQL (in RAM), Redis and sandbox runner.
+# Never touches the real Elvin database.   docker compose -f docker-compose.test.yml run --rm --build tests
+name: elvin-test
+services:
+  testdb:
+    image: postgres:17.11-alpine
+    environment: {POSTGRES_USER: elvin, POSTGRES_PASSWORD: elvin, POSTGRES_DB: elvin_test}
+    tmpfs: [/var/lib/postgresql/data]
+    healthcheck: {test: ["CMD-SHELL", "pg_isready -U elvin -d elvin_test"], interval: 2s, timeout: 3s, retries: 30}
+  testredis:
+    image: redis:7.4.6-alpine
+    healthcheck: {test: ["CMD", "redis-cli", "ping"], interval: 2s, timeout: 3s, retries: 30}
+  testrunner:
+    image: elvin-runner:1
+    environment: {RUNNER_TOKEN: test-runner-token, RUNNER_CONCURRENCY: "2"}
+    tmpfs: ["/jobs:size=1g,mode=1777"]
+  tests:
+    build: {context: ., dockerfile: tests/Dockerfile}
+    environment:
+      ENVIRONMENT: test
+      SECRET_KEY: test-secret-key-0123456789-abcdefghijklmnopqrstuvwxyz
+      DATABASE_URL: postgresql+asyncpg://elvin:elvin@testdb:5432/elvin_test
+      REDIS_URL: redis://testredis:6379/0
+      RUNNER_URL: http://testrunner:9000
+      RUNNER_TOKEN: test-runner-token
+      ELVIN_FAKE_AI: "1"
+      ELVIN_FAKE_AI_DELAY_MS: "5"
+      HOST_OS: macos
+      HOST_ARCH: arm64
+      LOCAL_LLM_BACKEND: ollama
+      LOCAL_LLM_URL: http://127.0.0.1:9
+      ELVIN_HOME: /tmp/elvin-test-home
+    depends_on:
+      testdb: {condition: service_healthy}
+      testredis: {condition: service_healthy}
+      testrunner: {condition: service_started}
+    command: ["pytest", "-q", "-ra", "--durations=12"]

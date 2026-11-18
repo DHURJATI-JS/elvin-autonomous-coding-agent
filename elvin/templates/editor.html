@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% set page_title = "Editor" %}{% set page_icon = "fa-solid fa-code" %}{% set page_grad = "from-indigo-500 to-blue-500" %}
+{% block vendor_css %}
+<link rel="stylesheet" href="/static/vendor/codemirror/lib/codemirror.css">
+<link rel="stylesheet" href="/static/vendor/codemirror/addon/dialog/dialog.css">
+{% endblock %}
+{% block content %}
+{% include "_project_header.html" %}
+<div class="grid gap-4 lg:grid-cols-[280px_minmax(0,1fr)]">
+  <aside class="glass flex h-[calc(100vh-13rem)] min-h-[520px] flex-col overflow-hidden animate-fade-up">
+    <div class="flex items-center justify-between border-b border-[var(--border)] px-3 py-2">
+      <span class="text-xs font-semibold uppercase tracking-wider faint">Files</span>
+      <div class="flex gap-0.5">
+        <button class="btn-icon !h-7 !w-7 text-xs" id="new-file" title="New file"><i class="fa-regular fa-file"></i></button>
+        <button class="btn-icon !h-7 !w-7 text-xs" id="new-folder" title="New folder"><i class="fa-regular fa-folder"></i></button>
+        <label class="btn-icon !h-7 !w-7 cursor-pointer text-xs" title="Upload files into this project"><i class="fa-solid fa-upload"></i><input type="file" id="upload-into" class="hidden" multiple></label>
+        <button class="btn-icon !h-7 !w-7 text-xs" id="refresh-tree" title="Refresh"><i class="fa-solid fa-rotate"></i></button>
+      </div>
+    </div>
+    <div id="tree" class="flex-1 overflow-auto p-1.5"></div>
+  </aside>
+  <section class="glass flex h-[calc(100vh-13rem)] min-h-[520px] flex-col overflow-hidden animate-fade-up">
+    <div class="flex items-center gap-1 overflow-x-auto border-b border-[var(--border)] px-2 py-1.5" id="tabs"></div>
+    <div class="relative min-h-0 flex-1" id="editor-wrap">
+      <div id="editor-empty" class="absolute inset-0 flex flex-col items-center justify-center text-center">
+        <i class="fa-solid fa-code text-4xl text-violet-500"></i>
+        <p class="mt-3 font-medium">Open a file from the left</p>
+        <p class="mt-1 text-sm muted">Qwen Coder suggests completions as you type - press <span class="kbd">Tab</span> to accept, <span class="kbd">Esc</span> to dismiss, <span class="kbd">⌘/Ctrl S</span> to save.</p>
+      </div>
+      <div id="editor" class="hidden h-full"></div>
+      <div id="image-view" class="checker absolute inset-0 hidden flex-col items-center justify-center gap-3 overflow-auto p-6">
+        <img id="image-el" alt="Image preview" class="max-h-[85%] max-w-full rounded-lg shadow-2xl">
+        <div id="image-info" class="rounded-full bg-[var(--card-strong)] px-3 py-1 text-xs muted"></div>
+      </div>
+    </div>
+    <div id="run-panel" class="border-t border-[var(--border)]">
+      <div class="flex flex-wrap items-center gap-2 px-3 py-2">
+        <i class="fa-solid fa-terminal text-xs muted" title="Runs in Elvin's isolated Linux sandbox"></i>
+        <input id="run-cmd" class="input min-w-[180px] flex-1 !py-1.5 font-mono !text-xs" placeholder="python main.py" maxlength="500" aria-label="Command to run">
+        <button class="btn btn-primary btn-sm" id="run-go" title="Run (⌘/Ctrl + Enter)"><i class="fa-solid fa-play"></i> Run</button>
+        <button class="btn btn-ghost btn-sm hidden" id="render-go"><i class="fa-regular fa-image"></i> Render page</button>
+        <button class="btn btn-ghost btn-sm hidden" id="ask-fix"><i class="fa-solid fa-wand-magic-sparkles"></i> Ask Elvin to fix</button>
+        <button class="btn-icon !h-7 !w-7 text-xs" id="run-toggle" title="Show / hide output"><i class="fa-solid fa-chevron-up"></i></button>
+      </div>
+      <div id="run-output" class="hidden px-3 pb-3">
+        <div id="run-meta" class="mb-1 text-xs muted"></div>
+        <pre class="terminal !max-h-56" id="run-text"></pre>
+        <img id="render-img" alt="Rendered page" class="mt-2 hidden max-h-72 rounded-lg border border-[var(--border)]">
+      </div>
+    </div>
+    <div class="flex flex-wrap items-center gap-3 border-t border-[var(--border)] px-3 py-1.5 text-xs muted">
+      <span id="st-file">-</span><span id="st-lang"></span><span id="st-pos"></span>
+      <span class="ml-auto flex items-center gap-1.5" id="st-ai"><span class="dot dot-ok"></span> Qwen autocomplete</span>
+      <label class="flex cursor-pointer items-center gap-1.5"><span class="toggle" role="switch" aria-checked="true" id="ai-toggle" tabindex="0"></span>Suggest</label>
+      <span id="st-save">saved</span>
+      <button class="btn btn-primary btn-sm" id="save-btn"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+    </div>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}
+{% for f in ['lib/codemirror.js','addon/mode/simple.js','addon/mode/overlay.js','addon/edit/closebrackets.js','addon/edit/matchbrackets.js','addon/edit/closetag.js',
+             'addon/selection/active-line.js','addon/comment/comment.js','addon/search/searchcursor.js','addon/dialog/dialog.js','addon/search/search.js',
+             'mode/xml/xml.js','mode/javascript/javascript.js','mode/css/css.js','mode/htmlmixed/htmlmixed.js','mode/python/python.js','mode/markdown/markdown.js',
+             'mode/shell/shell.js','mode/sql/sql.js','mode/go/go.js','mode/rust/rust.js','mode/clike/clike.js','mode/yaml/yaml.js','mode/dockerfile/dockerfile.js',
+             'mode/toml/toml.js','mode/php/php.js','mode/ruby/ruby.js','mode/swift/swift.js','mode/jsx/jsx.js'] %}
+<script nonce="{{ nonce }}" src="/static/vendor/codemirror/{{ f }}"></script>
+{% endfor %}
+<script nonce="{{ nonce }}" type="module" src="/static/js/editor.js"></script>
+{% endblock %}

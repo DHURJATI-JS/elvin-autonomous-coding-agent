@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block footer %}{% endblock %}
+{% block content %}
+<div class="mx-auto grid min-h-[calc(100vh-9rem)] max-w-5xl items-center gap-10 lg:grid-cols-2">
+  <div class="hidden lg:block animate-fade-up">
+    <span class="logo-mark !h-14 !w-14 text-xl"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+    <h1 class="mt-6 text-4xl font-semibold tracking-tight">{% block side_title %}Welcome back to <span class="gradient-text">Elvin</span>{% endblock %}</h1>
+    <p class="mt-3 max-w-md muted">{% block side_text %}Your autonomous agentic coder - it plans, codes and tests, and always asks before it acts.{% endblock %}</p>
+    <ul class="mt-8 space-y-3 text-sm">
+      <li class="flex items-center gap-3"><span class="icon-tile !h-9 !w-9 !text-sm bg-gradient-to-br from-violet-500 to-indigo-500"><i class="fa-solid fa-user-shield"></i></span>One active login per account - other devices are signed out</li>
+      <li class="flex items-center gap-3"><span class="icon-tile !h-9 !w-9 !text-sm bg-gradient-to-br from-cyan-500 to-sky-500"><i class="fa-solid fa-key"></i></span>Passwords hashed with Argon2id</li>
+      <li class="flex items-center gap-3"><span class="icon-tile !h-9 !w-9 !text-sm bg-gradient-to-br from-pink-500 to-rose-500"><i class="fa-solid fa-hand"></i></span>Brute-force protection and account lockout</li>
+    </ul>
+  </div>
+  <div class="glass-strong w-full p-6 sm:p-8 animate-fade-up">
+    {% if errors %}
+    <div class="mb-4 rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-600 dark:text-rose-300" role="alert">
+      {% for e in errors %}<div><i class="fa-solid fa-circle-exclamation"></i> {{ e }}</div>{% endfor %}
+    </div>
+    {% endif %}
+    {% block form %}{% endblock %}
+  </div>
+</div>
+{% endblock %}

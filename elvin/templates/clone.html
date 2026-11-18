@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="mx-auto max-w-4xl animate-fade-up">
+  <div class="eyebrow">Import</div>
+  <h1 class="h-title mt-1 flex items-center gap-3"><span class="icon-tile !h-10 !w-10 !text-base bg-gradient-to-br from-violet-500 to-fuchsia-500"><i class="fa-solid fa-code-branch"></i></span>Clone a repository</h1>
+  <p class="mt-2 muted">Elvin downloads it into quarantine, reads its README and license, explains the terms and only imports it after you agree and ClamAV finds it clean.</p>
+  <form id="clone-form" class="glass-strong mt-6 flex flex-col gap-3 p-4 sm:flex-row">
+    <input class="input flex-1" id="clone-url" placeholder="https://github.com/owner/repo  or  owner/repo" maxlength="500" required>
+    <button class="btn btn-primary sheen" type="submit" id="clone-btn"><i class="fa-solid fa-magnifying-glass"></i> Inspect</button>
+  </form>
+  <div id="gate" class="mt-3 text-xs muted"></div>
+  <a class="mt-2 inline-flex items-center gap-2 text-sm text-violet-500 hover:underline" href="/github"><i class="fa-brands fa-github"></i> Or pick one of your GitHub repositories</a>
+  <div id="clone-view" class="mt-6"></div>
+  <div class="card mt-8"><h2 class="font-semibold">Recent clones</h2><div id="recent" class="mt-3 space-y-1.5 text-sm"></div></div>
+</section>
+{% endblock %}
+{% block scripts %}<script nonce="{{ nonce }}" type="module" src="/static/js/clone.js"></script>{% endblock %}

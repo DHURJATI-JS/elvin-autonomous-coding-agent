@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="mx-auto max-w-4xl space-y-5 animate-fade-up">
+  <div><div class="eyebrow">About</div><h1 class="h-title mt-1">Elvin - autonomous agentic coder</h1>
+    <p class="mt-2 muted">Elvin runs entirely on your computer (with optional cloud models). It plans, writes, tests and verifies code, and asks for your permission before every change or command.</p></div>
+  <div class="card prose-elvin">
+    <h2 class="text-lg font-semibold">How Elvin keeps your code safe</h2>
+    <ul>
+      <li><strong>Permission dialogs</strong> - every file change, command, install and load test is shown to you first, with the exact diff.</li>
+      <li><strong>Folder boundary</strong> - AI writes are confined to the project folder (absolute paths, "..", symlinks and the .git folder are refused).</li>
+      <li><strong>Crash-safe journal</strong> - change sets are all-or-nothing, so network drops, crashes or blackouts never leave half-written files.</li>
+      <li><strong>Timestamped versions</strong> - hash-chained snapshots after every step, stored in PostgreSQL and on your disk, verifiable at any time.</li>
+      <li><strong>Library gate</strong> - every library Elvin wants to use is checked on OSV.dev first; vulnerable or non-existent packages are blocked.</li>
+      <li><strong>Sandbox</strong> - commands and screenshots run in a separate container with no secrets and no database access.</li>
+      <li><strong>ClamAV</strong> - uploads, images and cloned repositories are virus-scanned before they enter your workspace.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2 class="text-lg font-semibold">Limits</h2>
+    <p class="mt-1 text-sm muted">Caps keep every account and page fast and safe.</p>
+    <div class="mt-3 overflow-x-auto"><table class="table text-sm"><tbody>
+      {% for label, value in [('Projects per account', limits.MAX_PROJECTS_PER_USER), ('Recent projects in the menu', limits.NAV_RECENT_PROJECTS),
+        ('Files per upload', limits.MAX_UPLOAD_FILES), ('Upload size', (limits.MAX_UPLOAD_BYTES // 1048576)|string ~ ' MB'),
+        ('Message length', limits.MAX_PROMPT_CHARS ~ ' characters'), ('Messages per minute / hour', limits.CHAT_PER_MINUTE ~ ' / ' ~ limits.CHAT_PER_HOUR),
+        ('Parallel tasks per account', limits.MAX_CONCURRENT_TASKS_PER_USER), ('Steps per Elvin task', limits.MAX_STEPS_PER_TASK),
+        ('Changes per step', limits.MAX_ACTIONS_PER_STEP), ('Memories per project', limits.MAX_MEMORIES_PER_PROJECT),
+        ('Saved versions per project', limits.MAX_SNAPSHOTS_PER_PROJECT), ('Auto-cancel after closing the tab', limits.PRESENCE_CANCEL_S ~ ' s'),
+        ('Load-test users / duration', limits.LOADTEST_MAX_USERS ~ ' users / ' ~ (limits.LOADTEST_MAX_DURATION_S // 60) ~ ' min'),
+        ('Endpoints per load test', limits.LOADTEST_MAX_ENDPOINTS), ('Bug-hunt files', limits.BUGHUNT_MAX_FILES),
+        ('Qwen bug hunts', 'up to ' ~ limits.QWEN_LARGE_PROJECT_FILES ~ ' files'), ('Clone size', (limits.CLONE_MAX_BYTES // 1048576) ~ ' MB')] %}
+      <tr><td class="muted">{{ label }}</td><td class="font-medium">{{ value }}</td></tr>
+      {% endfor %}
+    </tbody></table></div>
+  </div>
+  <div class="card text-sm">
+    <h2 class="text-lg font-semibold">Disclaimer</h2>
+    <p class="mt-2 muted">Elvin is provided "as is", without warranty of any kind, express or implied. AI models make mistakes: generated code, security findings, vulnerability reports, license summaries and load-test results can be wrong or incomplete, and the safety features are aids, not guarantees. Review every change before you approve it. License and terms summaries are not legal advice. Only scan, clone and stress test systems you own or are authorised to test. The authors accept no liability for any loss or damage arising from its use.</p>
+  </div>
+</section>
+{% endblock %}

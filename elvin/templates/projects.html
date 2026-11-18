@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="flex flex-wrap items-end justify-between gap-4 animate-fade-up">
+  <div><div class="eyebrow">Workspace</div><h1 class="h-title mt-1">Projects</h1>
+    <p class="mt-1 text-sm muted">{% if pick %}Choose a project to open <strong>{{ pick_label }}</strong>.{% else %}Up to {{ limits.MAX_PROJECTS_PER_USER }} projects. Files live in your Elvin workspace folder.{% endif %}</p></div>
+  <div class="flex flex-wrap gap-2">
+    <button class="btn btn-primary sheen" id="new-project"><i class="fa-solid fa-plus"></i> New project</button>
+    <label class="btn btn-ghost cursor-pointer"><i class="fa-solid fa-folder-open"></i> Open folder<input type="file" id="upload-folder" class="hidden" webkitdirectory multiple></label>
+    <label class="btn btn-ghost cursor-pointer"><i class="fa-regular fa-file"></i> Open files<input type="file" id="upload-files" class="hidden" multiple></label>
+    <a class="btn btn-ghost" href="/clone"><i class="fa-solid fa-code-branch"></i> Clone</a>
+  </div>
+</section>
+<div class="mt-5 flex items-center gap-2"><div class="seg" id="filter"><button aria-pressed="true" data-f="active">Active</button><button aria-pressed="false" data-f="archived">Archived</button><button aria-pressed="false" data-f="all">All</button></div>
+  <span class="text-xs muted" id="count"></span></div>
+<div id="upload-progress" class="mt-4 hidden glass p-4"><div class="flex items-center justify-between text-sm"><span id="upload-label">Uploading...</span><span id="upload-pct">0%</span></div><div class="progress mt-2"><span id="upload-bar"></span></div></div>
+<div id="project-grid" class="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-3"></div>
+<template id="pick-target">{{ pick }}</template>
+{% endblock %}
+{% block scripts %}<script nonce="{{ nonce }}" type="module" src="/static/js/projects.js"></script>{% endblock %}

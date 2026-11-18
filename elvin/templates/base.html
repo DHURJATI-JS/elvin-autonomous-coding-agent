@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en" data-theme-pref="{{ theme }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% if title %}{{ title }} · {% endif %}Elvin</title>
+  <meta name="description" content="Elvin - an autonomous agentic coder that asks before it acts.">
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  <meta name="session-fp" content="{{ session_fp }}">
+  <meta name="color-scheme" content="dark light">
+  <link rel="icon" href="/static/img/elvin.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/vendor/fontawesome/css/all.min.css">
+  {% block vendor_css %}{% endblock %}
+  <link rel="stylesheet" href="/static/css/app.css">
+  <script nonce="{{ nonce }}">
+    (function () {
+      var pref = document.documentElement.getAttribute('data-theme-pref') || 'system', t = pref;
+      try { t = localStorage.getItem('elvin-theme') || pref; } catch (e) {}
+      if (t === 'system') { t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+      if (t === 'dark') { document.documentElement.classList.add('dark'); }
+    })();
+  </script>
+  {% block head %}{% endblock %}
+</head>
+<body class="min-h-screen font-sans antialiased" data-user="{{ '1' if user else '' }}" data-heartbeat="{{ heartbeat_s }}"
+      data-project="{{ project.id if project else '' }}">
+  <div class="bg-scene" aria-hidden="true">
+    <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+    <div class="grid-overlay"></div><div class="noise"></div>
+  </div>
+  {% include "_nav.html" %}
+  {% if user %}<div id="fallback-banner" class="mx-auto mt-3 hidden max-w-[1500px] px-3 sm:px-4"></div>{% endif %}
+  {% if flash %}
+  <div class="mx-auto mt-4 max-w-[1500px] px-3 sm:px-4">
+    <div class="glass flex items-center gap-3 px-4 py-3 text-sm animate-fade-up"><i class="fa-solid fa-circle-info text-violet-500"></i><span>{{ flash }}</span></div>
+  </div>
+  {% endif %}
+  <main class="mx-auto w-full max-w-[1500px] px-3 pb-16 pt-6 sm:px-4 {% block main_class %}{% endblock %}">
+    {% block content %}{% endblock %}
+  </main>
+  {% block footer %}
+  <footer class="mx-auto max-w-[1500px] px-4 pb-8 text-xs faint">
+    <div class="divider mb-4"></div>
+    <div class="flex flex-wrap items-center justify-between gap-2">
+      <span>Elvin · autonomous agentic coder · runs on your computer</span>
+      <span>Provided "as is", without warranty. AI output can be wrong - review every change. <a class="underline" href="/about">About &amp; disclaimer</a></span>
+    </div>
+  </footer>
+  {% endblock %}
+  <div id="toasts" class="pointer-events-none fixed bottom-4 right-4 z-[100] flex w-[min(420px,calc(100vw-2rem))] flex-col gap-2"></div>
+  <div id="modal-root"></div>
+  <script nonce="{{ nonce }}" type="module" src="/static/js/core.js"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

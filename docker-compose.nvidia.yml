@@ -1,0 +1,31 @@
+# NVIDIA GPUs (Linux, or Windows with Docker Desktop + WSL2): Qwen Coder served by vLLM.
+# Added automatically by the installer when an NVIDIA GPU is detected.
+services:
+  vllm:
+    image: vllm/vllm-openai:v0.33.0
+    command: ["--model", "${QWEN_MODEL}", "--max-model-len", "${QWEN_CONTEXT:-16384}",
+              "--gpu-memory-utilization", "0.88", "--enable-prefix-caching", "--host", "0.0.0.0", "--port", "8000"]
+    volumes:
+      - elvin_hf_cache:/root/.cache/huggingface
+    ipc: host
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost:8000/health || exit 1"]
+      interval: 20s
+      timeout: 5s
+      retries: 60
+      start_period: 120s
+    networks: [default]
+    restart: unless-stopped
+  app:
+    depends_on:
+      vllm: {condition: service_started}
+
+volumes:
+  elvin_hf_cache:

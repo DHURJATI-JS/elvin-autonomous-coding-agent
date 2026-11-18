@@ -1,0 +1,50 @@
+# Throwaway browser-test / stress-test stack (fake AI models, RAM-only database).
+#   docker compose -f docker-compose.e2e.yml up -d e2eapp
+#   docker compose -f docker-compose.e2e.yml run --build browser
+name: elvin-e2e
+services:
+  e2edb:
+    image: postgres:17.11-alpine
+    environment: {POSTGRES_USER: elvin, POSTGRES_PASSWORD: elvin, POSTGRES_DB: elvin_e2e}
+    tmpfs: [/var/lib/postgresql/data]
+    healthcheck: {test: ["CMD-SHELL", "pg_isready -U elvin -d elvin_e2e"], interval: 2s, timeout: 3s, retries: 30}
+  e2eredis:
+    image: redis:7.4.6-alpine
+    healthcheck: {test: ["CMD", "redis-cli", "ping"], interval: 2s, timeout: 3s, retries: 30}
+  e2erunner:
+    image: elvin-runner:1
+    environment: {RUNNER_TOKEN: e2e-runner-token}
+    tmpfs: ["/jobs:size=1g,mode=1777"]
+  e2eapp:
+    image: elvin-app:1
+    environment:
+      SECRET_KEY: e2e-secret-key-0123456789-abcdefghijklmnopqrstuvwxyz
+      DATABASE_URL: postgresql+asyncpg://elvin:elvin@e2edb:5432/elvin_e2e
+      REDIS_URL: redis://e2eredis:6379/0
+      RUNNER_URL: http://e2erunner:9000
+      RUNNER_TOKEN: e2e-runner-token
+      ELVIN_HOME: /tmp/elvin
+      BASE_URL: http://e2eapp:8765
+      ELVIN_FAKE_AI: "1"
+      ELVIN_FAKE_AI_DELAY_MS: "400"
+      CLAMAV_HOST: no-clamav-in-e2e
+      CLAMAV_REQUIRED: "false"
+      HOST_OS: macos
+      HOST_ARCH: arm64
+      HOST_GPU: apple
+      HOST_GPU_NAME: Apple M-series (e2e)
+      LOCAL_LLM_BACKEND: ollama
+      LOCAL_LLM_URL: http://127.0.0.1:9
+      RATE_LIMIT_MULTIPLIER: ${E2E_RATE_MULTIPLIER:-1}
+    depends_on:
+      e2edb: {condition: service_healthy}
+      e2eredis: {condition: service_healthy}
+      e2erunner: {condition: service_started}
+  browser:
+    build: {context: ., dockerfile: tests/e2e/Dockerfile}
+    environment: {E2E_BASE: "http://e2eapp:8765", E2E_DB: "postgresql://elvin:elvin@e2edb:5432/elvin_e2e"}
+    depends_on: [e2eapp]
+  stress:
+    build: {context: ., dockerfile: tests/stress/Dockerfile}
+    environment: {STRESS_HOST: "http://e2eapp:8765"}
+    depends_on: [e2eapp]

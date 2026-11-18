@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% set page_title = "Vulnerability Scan" %}{% set page_icon = "fa-solid fa-shield-virus" %}{% set page_grad = "from-teal-500 to-cyan-500" %}
+{% block content %}
+{% include "_project_header.html" %}
+<div class="grid gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
+  <section class="min-w-0 space-y-5 animate-fade-up">
+    <div class="card flex flex-wrap items-center justify-between gap-4">
+      <div><h2 class="font-semibold">Dependencies checked against OSV.dev</h2>
+        <p class="text-xs muted" id="scan-sub">Reads requirements.txt, pyproject.toml, package.json / lock, go.mod, Cargo.lock, Gemfile.lock and composer.lock.</p></div>
+      <button class="btn btn-primary sheen" id="scan"><i class="fa-solid fa-satellite-dish"></i> Scan now</button>
+    </div>
+    <div class="grid grid-cols-2 gap-3 sm:grid-cols-5" id="sev-tiles"></div>
+    <div id="vuln-list" class="space-y-3"></div>
+  </section>
+  <aside class="min-w-0 space-y-5 animate-fade-up">
+    <div class="card">
+      <h2 class="font-semibold"><i class="fa-solid fa-flask-vial text-teal-500"></i> Check a library</h2>
+      <p class="mt-1 text-xs muted">The same gate Elvin must pass before it may use a library.</p>
+      <form id="check-form" class="mt-3 space-y-2">
+        <select class="input" id="ck-eco"><option>PyPI</option><option>npm</option><option>Go</option><option>crates.io</option><option>RubyGems</option><option>Packagist</option></select>
+        <input class="input" id="ck-name" placeholder="package name" maxlength="214" required>
+        <input class="input" id="ck-ver" placeholder="version (blank = latest)" maxlength="64">
+        <button class="btn btn-ghost w-full" type="submit"><i class="fa-solid fa-shield-halved"></i> Check</button>
+      </form>
+      <div id="check-result" class="mt-3"></div>
+    </div>
+    <div class="card text-xs muted"><i class="fa-solid fa-circle-info"></i> Severity comes from CVSS scores (or the advisory's rating). Recommendations name the smallest upgrade that fixes every known advisory. Results are not a guarantee - no scanner finds everything.</div>
+  </aside>
+</div>
+{% endblock %}
+{% block scripts %}<script nonce="{{ nonce }}" type="module" src="/static/js/vulns.js"></script>{% endblock %}

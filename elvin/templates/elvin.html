@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% set page_title = "Elvin AI" %}{% set page_icon = "fa-solid fa-robot" %}
+{% block content %}
+{% include "_project_header.html" %}
+<div class="grid gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
+  <section class="glass flex h-[calc(100vh-14.5rem)] min-h-[560px] flex-col overflow-hidden animate-fade-up">
+    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--border)] px-4 py-2.5">
+      <div class="flex items-center gap-2 text-sm"><span class="avatar-elvin"><i class="fa-solid fa-wand-magic-sparkles text-xs"></i></span>
+        <span class="font-semibold">Elvin</span><span id="agent-status" class="badge"><span class="dot dot-ok"></span> idle</span></div>
+      <div class="flex items-center gap-2 text-xs muted"><span id="team-badge" class="badge badge-brand"></span><a id="effort-badge" class="badge" href="/usage"></a></div>
+    </div>
+    <div id="timeline" class="flex-1 space-y-4 overflow-y-auto px-3 py-5 sm:px-5" aria-live="polite"></div>
+    <div class="border-t border-[var(--border)] p-3">
+      <div id="attachments" class="mb-2 flex flex-wrap gap-2"></div>
+      <div class="glass-strong flex flex-col gap-2 p-2 !rounded-2xl">
+        <textarea id="prompt" class="w-full resize-none bg-transparent px-2 py-1.5 text-[15px] outline-none" rows="2" maxlength="{{ limits.MAX_PROMPT_CHARS }}"
+          placeholder="Ask Elvin to build, fix, explain or stress test something... (Enter to send, Shift+Enter for a new line)"></textarea>
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="flex items-center gap-1">
+            <label class="btn-icon cursor-pointer" title="Attach a design image (Elvin builds it)"><i class="fa-regular fa-image"></i><input id="image-input" type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="hidden"></label>
+            <button class="btn-icon" id="run-btn" type="button" title="Run a command yourself in the sandbox (Elvin sees the result)"><i class="fa-solid fa-terminal"></i></button>
+            <select id="team-select" class="input !w-auto !py-1.5 !text-xs" title="AI team for this message"></select>
+            <input id="design-folder" class="input hidden !w-36 !py-1.5 !text-xs" value="design" maxlength="200" title="Folder for the generated design">
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="hidden text-xs faint sm:inline" id="char-count"></span>
+            <button id="stop-btn" class="btn btn-danger hidden"><i class="fa-solid fa-stop"></i> Stop</button>
+            <button id="send-btn" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Send</button>
+          </div>
+        </div>
+      </div>
+      <p class="mt-1.5 px-1 text-[11px] faint">Elvin asks before changing files or running commands. Stopping puts files back to where the task began.</p>
+    </div>
+  </section>
+  <aside class="min-w-0 space-y-5 animate-fade-up">
+    <div class="card">
+      <div class="flex items-center justify-between"><h2 class="font-semibold"><i class="fa-solid fa-brain text-pink-500"></i> Project memory</h2><span class="text-xs faint" id="mem-count"></span></div>
+      <p class="mt-1 text-xs muted">Only this project. Elvin remembers what you tell it once.</p>
+      <div id="memory" class="mt-3 max-h-60 space-y-1.5 overflow-y-auto text-sm"></div>
+      <form id="memory-form" class="mt-3 flex gap-2"><input class="input !py-2" id="memory-input" maxlength="{{ limits.MAX_MEMORY_CHARS }}" placeholder="e.g. Always use PostgreSQL"><button class="btn btn-ghost btn-sm" type="submit"><i class="fa-solid fa-plus"></i></button></form>
+    </div>
+    <div class="card">
+      <div class="flex items-center justify-between"><h2 class="font-semibold"><i class="fa-solid fa-clock-rotate-left text-cyan-500"></i> Timestamped versions</h2><a class="text-xs text-violet-500 hover:underline" href="/p/{{ project.id }}/history">History</a></div>
+      <div id="versions" class="mt-3 space-y-1.5 text-sm"></div>
+    </div>
+    <div class="card text-sm">
+      <h2 class="font-semibold"><i class="fa-solid fa-wand-magic-sparkles text-violet-500"></i> Try asking</h2>
+      <div class="mt-2 space-y-1.5" id="examples">
+        <button class="menu-item !px-2 text-left" data-example="Create a Python script that renames all .txt files in a folder to lowercase, with tests, and run them.">Write a script with tests and run them</button>
+        <button class="menu-item !px-2 text-left" data-example="Explain how this project is structured and what each file does.">Explain this project</button>
+        <button class="menu-item !px-2 text-left" data-example="Stress test http://localhost:8000 with 50 users for 60 seconds.">Stress test my running app with Locust</button>
+        <button class="menu-item !px-2 text-left" data-example="Remember: we use 4-space indentation and type hints everywhere.">Teach Elvin a project rule</button>
+      </div>
+    </div>
+  </aside>
+</div>
+{% endblock %}
+{% block scripts %}<script nonce="{{ nonce }}" type="module" src="/static/js/elvin.js"></script>{% endblock %}

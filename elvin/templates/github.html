@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="flex flex-wrap items-end justify-between gap-4 animate-fade-up">
+  <div>
+    <div class="eyebrow">Collected with the GitHub CLI</div>
+    <h1 class="h-title mt-1 flex items-center gap-3"><span class="icon-tile !h-10 !w-10 !text-base bg-gradient-to-br from-slate-600 to-zinc-800"><i class="fa-brands fa-github"></i></span>All your repositories</h1>
+    <p class="mt-1 text-sm muted" id="gh-sub">Loading...</p>
+    <p class="mt-1 text-xs muted"><i class="fa-solid fa-lock"></i> Read-only: view everything here - Elvin never modifies or deletes code that is already on GitHub (no force-push, no deletion).</p>
+  </div>
+  <button class="btn btn-ghost" id="refresh"><i class="fa-solid fa-rotate"></i> Refresh</button>
+</section>
+<div class="glass mt-5 flex flex-wrap items-center gap-3 p-3 animate-fade-up">
+  <div class="relative min-w-[220px] flex-1"><i class="fa-solid fa-magnifying-glass pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-xs faint"></i>
+    <input class="input !pl-9" id="q" placeholder="Search name, description or language" maxlength="100" autocomplete="off"></div>
+  <div class="seg flex-wrap" id="filter">
+    <button data-f="all" aria-pressed="true">All</button><button data-f="owned" aria-pressed="false">Mine</button><button data-f="forks" aria-pressed="false">Forks</button>
+    <button data-f="private" aria-pressed="false">Private</button><button data-f="public" aria-pressed="false">Public</button><button data-f="archived" aria-pressed="false">Archived</button>
+  </div>
+  <select class="input !w-auto" id="sort"><option value="pushed">Recently pushed</option><option value="stars">Most stars</option><option value="name">Name</option></select>
+</div>
+<p class="mt-3 text-xs muted" id="count"></p>
+<div id="repos" class="mt-3 grid gap-3 md:grid-cols-2 2xl:grid-cols-3"></div>
+{% endblock %}
+{% block scripts %}<script nonce="{{ nonce }}" type="module" src="/static/js/github-page.js"></script>{% endblock %}

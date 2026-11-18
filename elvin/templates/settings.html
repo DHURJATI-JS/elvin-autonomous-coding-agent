@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="mx-auto max-w-4xl space-y-5 animate-fade-up">
+  <div><div class="eyebrow">Account</div><h1 class="h-title mt-1">Settings</h1></div>
+  <div class="card">
+    <h2 class="font-semibold">Profile</h2>
+    <div class="mt-3 grid gap-3 text-sm sm:grid-cols-2"><div><div class="text-xs faint">Username</div><div class="font-medium">{{ user.username }}</div></div>
+      <div><div class="text-xs faint">Email</div><div class="font-medium">{{ user.email }}</div></div></div>
+  </div>
+  <div class="card">
+    <h2 class="font-semibold">Appearance</h2>
+    <div class="seg mt-3" id="theme-seg"><button data-t="system" aria-pressed="false"><i class="fa-solid fa-display"></i> System</button><button data-t="light" aria-pressed="false"><i class="fa-solid fa-sun"></i> Light</button><button data-t="dark" aria-pressed="false"><i class="fa-solid fa-moon"></i> Dark</button></div>
+  </div>
+  <div class="card flex items-start justify-between gap-4">
+    <div><h2 class="font-semibold">Timestamped versions</h2><p class="mt-1 text-sm muted">After every step Elvin saves a verified version you can restore. Turning this off keeps the crash-safe journal but stops saving history.</p></div>
+    <span class="toggle mt-1" role="switch" tabindex="0" id="versioning" aria-checked="{{ 'true' if user.versioning_enabled else 'false' }}"></span>
+  </div>
+  <div class="card">
+    <div class="flex items-center justify-between"><h2 class="font-semibold">AI team, effort &amp; models</h2><a class="text-sm text-violet-500 hover:underline" href="/usage">See usage data</a></div>
+    <div id="ai-settings" class="mt-3"><div class="skeleton h-40"></div></div>
+  </div>
+  <div class="card">
+    <h2 class="font-semibold">GitHub</h2><div id="gh-settings" class="mt-3 text-sm"><div class="skeleton h-10"></div></div>
+  </div>
+  <div class="card">
+    <h2 class="font-semibold">Change password</h2>
+    <form id="pw-form" class="mt-3 grid gap-3 sm:grid-cols-3">
+      <input class="input" type="password" id="pw-cur" placeholder="Current password" autocomplete="current-password" required>
+      <input class="input" type="password" id="pw-new" placeholder="New password" autocomplete="new-password" minlength="{{ limits.PASSWORD_MIN }}" required>
+      <input class="input" type="password" id="pw-conf" placeholder="Repeat new password" autocomplete="new-password" minlength="{{ limits.PASSWORD_MIN }}" required>
+      <div class="sm:col-span-3 flex justify-end"><button class="btn btn-primary" type="submit"><i class="fa-solid fa-key"></i> Update password</button></div>
+    </form>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}<script nonce="{{ nonce }}" type="module" src="/static/js/settings.js"></script>{% endblock %}

@@ -1,0 +1,15 @@
+.env
+.env.*
+!.env.example
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+node_modules/
+tests/.artifacts/
+*.log
+.DS_Store
+.vscode/
+.idea/
+docs/screenshots/*.tmp
